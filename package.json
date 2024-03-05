@@ -7,15 +7,24 @@
     "contracts": "ts-node src/contracts.ts",
     "ambire": "ts-node src/ambire.ts",
     "support": "ts-node src/support.ts",
-    "wallet-screening": "dotenv -- bash -c 'ts-node src/wallet-screening.ts'"
+    "wallet-screening": "dotenv -- bash -c 'ts-node src/wallet-screening.ts'",
+    "safe:create": "ts-node src/safe/createSafe.ts",
+    "safe:propose": "ts-node src/safe/proposeTx.ts",
+    "safe:pendings": "ts-node src/safe/getPendingsTxs.ts",
+    "safe:sign": "ts-node src/safe/signTx.ts",
+    "safe:execute": "ts-node src/safe/executeTx.ts"
   },
   "dependencies": {
+    "@safe-global/api-kit": "^2.2.0",
+    "@safe-global/protocol-kit": "^3.0.1",
+    "@safe-global/safe-core-sdk-types": "^4.0.1",
     "axios": "1.6.5",
-    "ethers": "6.10.0"
+    "dotenv": "^16.4.5",
+    "ethers": "^6.11.1"
   },
   "devDependencies": {
+    "dotenv-cli": "7.2.1",
     "ts-node": "10.9.2",
-    "typescript": "5.3.3",
-    "dotenv-cli": "7.2.1"
+    "typescript": "5.3.3"
   }
 }
