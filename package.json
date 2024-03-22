@@ -1,30 +1,50 @@
 {
-  "name": "eigenlayer-scripts",
+  "name": "eigenfoundation-scripts",
   "version": "1.0.0",
   "license": "MIT",
+  "author": "Wonderland",
   "scripts": {
-    "start": "ts-node src/main.ts",
-    "contracts": "ts-node src/contracts.ts",
     "ambire": "ts-node src/ambire.ts",
+    "contracts": "ts-node src/contracts.ts",
+    "csv-to-cbor": "ts-node src/csv-to-cbor.ts",
+    "csv-to-json": "ts-node src/csv-to-json.ts",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "lint:fix": "yarn run lint -- --fix",
+    "prepare": "husky install && wonderland-crypto-husky-checks install",
+    "read-cbor": "ts-node src/read-cbor.ts",
+    "start": "ts-node src/main.ts",
     "support": "ts-node src/support.ts",
-    "wallet-screening": "dotenv -- bash -c 'ts-node src/wallet-screening.ts'",
-    "safe:create": "ts-node src/safe/createSafe.ts",
-    "safe:propose": "ts-node src/safe/proposeTx.ts",
-    "safe:pendings": "ts-node src/safe/getPendingsTxs.ts",
-    "safe:sign": "ts-node src/safe/signTx.ts",
-    "safe:execute": "ts-node src/safe/executeTx.ts"
+    "usd-deposits": "ts-node src/usd-deposits.ts",
+    "wallet-screening": "dotenv -- bash -c 'ts-node src/wallet-screening.ts'"
+  },
+  "lint-staged": {
+    "src/**/*.ts": "eslint --cache --fix",
+    "src/**/*.{ts,md}": "prettier --write --ignore-unknown",
+    "package.json": "sort-package-json"
   },
   "dependencies": {
-    "@safe-global/api-kit": "^2.2.0",
-    "@safe-global/protocol-kit": "^3.0.1",
-    "@safe-global/safe-core-sdk-types": "^4.0.1",
+    "@openzeppelin/merkle-tree": "1.0.6",
     "axios": "1.6.5",
-    "dotenv": "^16.4.5",
-    "ethers": "^6.11.1"
+    "csv-parse": "5.5.5",
+    "dotenv": "16.4.5",
+    "ethers": "6.11.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "18.4.4",
+    "@commitlint/config-conventional": "18.4.4",
+    "@defi-wonderland/crypto-husky-checks": "1.3.0",
+    "@typescript-eslint/eslint-plugin": "6.0.0",
+    "@typescript-eslint/parser": "6.0.0",
     "dotenv-cli": "7.2.1",
+    "eslint": "8.45.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-import": "2.28.1",
+    "eslint-plugin-prettier": "5.0.0",
+    "husky": "8.0.3",
+    "lint-staged": "15.2.0",
+    "prettier": "3.0.3",
+    "sort-package-json": "2.6.0",
     "ts-node": "10.9.2",
-    "typescript": "5.3.3"
+    "typescript": "5.4.2"
   }
 }
