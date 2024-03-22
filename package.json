@@ -6,15 +6,13 @@
   "scripts": {
     "ambire": "ts-node src/ambire.ts",
     "contracts": "ts-node src/contracts.ts",
-    "csv-to-cbor": "ts-node src/csv-to-cbor.ts",
     "csv-to-json": "ts-node src/csv-to-json.ts",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "yarn run lint -- --fix",
     "prepare": "husky install && wonderland-crypto-husky-checks install",
-    "read-cbor": "ts-node src/read-cbor.ts",
     "start": "ts-node src/main.ts",
     "support": "ts-node src/support.ts",
-    "usd-deposits": "ts-node src/usd-deposits.ts",
+    "tvl-share-by-risk": "ts-node src/tvl-share-by-risk.ts",
     "wallet-screening": "dotenv -- bash -c 'ts-node src/wallet-screening.ts'"
   },
   "lint-staged": {
