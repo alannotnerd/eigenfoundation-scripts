@@ -6,7 +6,7 @@
   "scripts": {
     "ambire": "ts-node src/ambire.ts",
     "contracts": "ts-node src/contracts.ts",
-    "csv-to-json": "ts-node src/csv-to-json.ts",
+    "extract-addresses": "ts-node src/extract-addresses.ts",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "yarn run lint -- --fix",
     "prepare": "husky install && wonderland-crypto-husky-checks install",
