@@ -4,15 +4,12 @@
   "license": "MIT",
   "author": "Wonderland",
   "scripts": {
-    "ambire": "ts-node src/ambire.ts",
-    "contracts": "ts-node src/contracts.ts",
     "extract-addresses": "ts-node src/extract-addresses.ts",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "yarn run lint -- --fix",
     "prepare": "husky install && wonderland-crypto-husky-checks install",
-    "start": "ts-node src/main.ts",
-    "support": "ts-node src/support.ts",
     "tvl-share-by-risk": "ts-node src/tvl-share-by-risk.ts",
+    "generate-all": "ts-node src/generate-all.ts",
     "wallet-screening": "dotenv -- bash -c 'ts-node src/wallet-screening.ts'"
   },
   "lint-staged": {
