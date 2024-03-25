@@ -1,61 +1,41 @@
-import axios from 'axios';
 import * as fs from 'fs';
-import * as readline from 'readline';
+import { retrieveRisk, streamFile, log } from './utils';
+import { SCREENING_CSV_PATH, ADDRESSES_LIST_PATH } from './constants';
 
-export async function isHighRiskWallet(address: string): Promise<boolean> {
-  const entitiesUrl = `${process.env.CHAINALYSIS_BASE_URL}/v2/entities`;
-  const config = {
-    headers: {
-      Token: process.env.CHAINALYSIS_API_KEY,
-      Accept: 'application/json',
-    },
-  };
-
-  await axios.post(entitiesUrl, { address: address }, config);
-  const { data } = await axios.get(`${entitiesUrl}/${address}`, config);
-  return data.risk;
+export interface WalletRisk {
+  [address: string]: string;
 }
 
-async function loadCSV(filePath: string): Promise<string[]> {
-    const fileStream = fs.createReadStream(filePath);
-
-    const rl = readline.createInterface({
-        input: fileStream,
-        crlfDelay: Infinity
-    });
-
-    const lines: string[] = [];
-
-    for await (const line of rl) {
-        lines.push(line);
-    }
-
-    return lines;
-}
+const BATCH_SIZE = 30;
 
 (async () => {
-    const list = await loadCSV('data/just-addresses.csv');
-    const writer = fs.createWriteStream('data/wallet-screening.csv');
+  const list = await streamFile(ADDRESSES_LIST_PATH);
+  const processedWallets = await streamFile(SCREENING_CSV_PATH);
 
-    const batchSize = 50;
-    let processed = 1;
+  const walletsRisk: WalletRisk = processedWallets.reduce((result, item) => {
+    const [address, risk] = item.split(', ');
+    result[address] = risk;
+    return result;
+  }, <WalletRisk>{});
 
-    for (let i = 0; i < list.length; i += batchSize) {
-        const batch = list.slice(i, i + batchSize).filter(address => !!address);
-        console.log(`Processing ${batch.length} addresses...`);
+  const writer = fs.createWriteStream(SCREENING_CSV_PATH, { flags: 'a' });
 
-        const results = await Promise.all(
-            batch
-                
-                .map(async (address) => {
-                    const risk = await isHighRiskWallet(address);
-                    console.log(`${processed++}: ${address}, ${risk}`);
-                    return `${address}, ${risk}\n`
-                })
-        );
+  let processed = 1;
+  for (let i = 0; i < list.length; i += BATCH_SIZE) {
+    const batch = list
+      .slice(i, i + BATCH_SIZE)
+      .filter((address: string) => !!address && walletsRisk[address] === undefined);
 
-        writer.write(results.join(''));
-    }
+    const results = await Promise.all(
+      batch.map(async (address: string) => {
+        const risk = await retrieveRisk(address);
+        log(`Processed ${processed++}: ${address}, ${risk}`);
+        return `${address}, ${risk}\n`;
+      }),
+    );
 
-    writer.end();
+    writer.write(results.join(''));
+  }
+
+  writer.end();
 })();

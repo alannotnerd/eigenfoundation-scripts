@@ -1,20 +1,15 @@
 import { parse } from 'csv-parse/sync';
-import { readFileSync, writeFileSync } from 'fs';
-
-const eligibilityFilePath = 'data/eligible.csv';
-const walletScreeningFilePath = 'data/wallet-screening.csv';
+import { readFileSync } from 'fs';
+import { log } from './utils';
+import { ELIGIBILITY_CSV_PATH, SCREENING_JSON_PATH, CSV_PARSER_OPTIONS } from './constants';
 
 try {
   // Read the files
-  const eligibilityFile = readFileSync(eligibilityFilePath, 'utf-8');
-  const walletScreeningFile = readFileSync(walletScreeningFilePath, 'utf-8');
+  const eligibilityFile = readFileSync(ELIGIBILITY_CSV_PATH, 'utf-8');
+  const screenedWalletsFile = readFileSync(SCREENING_JSON_PATH, 'utf-8');
 
   // Parse the CSV data into JSON
-  const eligibilityRecordsRaw = parse(eligibilityFile, {
-    columns: true,
-    skip_empty_lines: true,
-    bom: true,
-  });
+  const eligibilityRecordsRaw = parse(eligibilityFile, CSV_PARSER_OPTIONS);
 
   const eligibilityMap = eligibilityRecordsRaw.reduce((acc: any, record: any) => {
     const address = record.Address;
@@ -24,17 +19,7 @@ try {
     return acc;
   }, {});
 
-  const walletScreeningRecordsRaw = parse(walletScreeningFile, {
-    columns: false,
-    skip_empty_lines: true,
-    bom: true,
-  });
-
-  const walletScreeningMap = walletScreeningRecordsRaw.reduce((acc: any, record: any) => {
-    acc[record[0]] = record[1].trim();
-    return acc;
-  }, {});
-
+  const screenedWallets = JSON.parse(screenedWalletsFile);
   const totalRecords = eligibilityRecordsRaw.length;
   const results = {
     severe: 0,
@@ -46,7 +31,7 @@ try {
 
   let index = 1;
   for (const [address, share] of Object.entries(eligibilityMap)) {
-    const risk = walletScreeningMap[address];
+    const risk = screenedWallets[address];
     const addressBalance = share as number;
 
     if(risk === 'Severe') {
@@ -63,9 +48,7 @@ try {
       console.error(`Unknown risk for address ${address}: ${risk}`);
     }
 
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write(`Processing ${index}/${totalRecords}`);
+    log(`Processing ${index}/${totalRecords}`);
     index++;
   }
 
