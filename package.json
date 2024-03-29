@@ -9,7 +9,8 @@
     "lint:fix": "yarn run lint -- --fix",
     "prepare": "husky install && wonderland-crypto-husky-checks install",
     "tvl-share-by-risk": "ts-node src/tvl-share-by-risk.ts",
-    "generate-all": "ts-node src/generate-all.ts",
+    "create-merkle-tree": "dotenv -- bash -c 'ts-node src/create-merkle-tree.ts'",
+    "wallet-screening-json": "ts-node src/wallet-screening-json.ts",
     "wallet-screening": "dotenv -- bash -c 'ts-node src/wallet-screening.ts'"
   },
   "lint-staged": {

@@ -1,9 +1,11 @@
 import axios from 'axios';
-import { createReadStream } from 'fs';
+import { parse } from 'csv-parse/sync';
+import { createReadStream, readFileSync } from 'fs';
 import * as readline from 'readline';
+import { CSV_PARSER_OPTIONS } from './constants';
 
 export async function retrieveRisk(address: string): Promise<string> {
-  const entitiesUrl = `${process.env.CHAINALYSIS_BASE_URL}/v2/entities`;
+  const entitiesUrl = `https://api.chainalysis.com/api/risk/v2/entities`;
   const config = {
     headers: {
       Token: process.env.CHAINALYSIS_API_KEY,
@@ -36,6 +38,11 @@ export async function streamFile(filePath: string): Promise<string[]> {
   }
 
   return lines;
+}
+
+export function readAndParseCSV(filePath: string): any[] {
+  const csvData = readFileSync(filePath, 'utf-8');
+  return parse(csvData, CSV_PARSER_OPTIONS);
 }
 
 export function log(message: string): void {
