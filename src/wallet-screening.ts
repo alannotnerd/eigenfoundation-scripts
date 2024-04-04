@@ -12,11 +12,14 @@ const BATCH_SIZE = 30;
   const list = await streamFile(ADDRESSES_LIST_PATH);
   const processedWallets = await streamFile(SCREENING_CSV_PATH);
 
-  const walletsRisk: WalletRisk = processedWallets.reduce((result, item) => {
-    const [address, risk] = item.split(', ');
-    result[address] = risk;
-    return result;
-  }, <WalletRisk>{});
+  const walletsRisk: WalletRisk = processedWallets.reduce(
+    (result, item) => {
+      const [address, risk] = item.split(', ');
+      result[address] = risk;
+      return result;
+    },
+    <WalletRisk>{},
+  );
 
   const writer = fs.createWriteStream(SCREENING_CSV_PATH, { flags: 'a' });
 

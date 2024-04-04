@@ -1,16 +1,12 @@
-import { parse } from 'csv-parse/sync';
-import { readFileSync, writeFileSync } from 'fs';
-import { ELIGIBILITY_CSV_PATH, ADDRESSES_LIST_PATH, CSV_PARSER_OPTIONS} from './constants';
+import { writeFileSync } from 'fs';
+import { ELIGIBILITY_CSV_PATH, ADDRESSES_LIST_PATH } from './constants';
+import { readAndParseCSV } from './utils';
 
 try {
-  // Read the CSV file
-  const csvData = readFileSync(ELIGIBILITY_CSV_PATH, 'utf-8');
-
-  // Parse the CSV data into JSON
-  const records = parse(csvData, CSV_PARSER_OPTIONS);
+  const records = readAndParseCSV(ELIGIBILITY_CSV_PATH);
 
   // Write the list of addresses to a file
-  writeFileSync(ADDRESSES_LIST_PATH, records.map((record: any) => record.Address).join("\n"), 'utf-8');
+  writeFileSync(ADDRESSES_LIST_PATH, records.map((record: any) => record.Address).join('\n'), 'utf-8');
 
   console.log(`The list of eligible addresses has been saved to ${ADDRESSES_LIST_PATH}`);
 } catch (error) {
