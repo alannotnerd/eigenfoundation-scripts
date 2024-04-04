@@ -21,6 +21,7 @@ async function excludeHighRiskAddresses(
 
 function collectEligibleAddresses(records: any[]): Record<string, any> {
   return records.reduce((acc, record) => {
+    // TODO: Replace with the real amount when we get the final eligibility data
     const amount = (Math.round(Number(record['Balance USD']) * 100) / 100).toFixed(0);
     acc[record.Address] = { amount };
     return acc;
@@ -60,7 +61,7 @@ function createMerkleTree(eligibleAddresses: Record<string, any>): StandardMerkl
     console.log('Generating proofs and signatures');
     for (const [index, leaf] of tree.entries()) {
       const [address, amount] = leaf;
-      log(`[${index}/${totalAddresses}] Creating a signature for ${address}`);
+      log(`[${index + 1}/${totalAddresses}] Creating a signature for ${address}`);
 
       const proof = tree.getProof(index);
       const signature = await generateSignature(address, amount, signer);

@@ -24,20 +24,25 @@ export async function retrieveRisk(address: string): Promise<string> {
 }
 
 export async function streamFile(filePath: string): Promise<string[]> {
-  const fileStream = createReadStream(filePath);
-
-  const rl = readline.createInterface({
-    input: fileStream,
-    crlfDelay: Infinity,
-  });
-
-  const lines: string[] = [];
-
-  for await (const line of rl) {
-    lines.push(line);
+  try {
+    const fileStream = createReadStream(filePath);
+  
+    const rl = readline.createInterface({
+      input: fileStream,
+      crlfDelay: Infinity,
+    });
+  
+    const lines: string[] = [];
+  
+    for await (const line of rl) {
+      lines.push(line);
+    }
+  
+    return lines;
+  } catch(error) {
+    console.log(error.message);
+    return [];
   }
-
-  return lines;
 }
 
 export function readAndParseCSV(filePath: string): any[] {
