@@ -8,20 +8,20 @@ import { readFileSync } from 'fs';
  * @returns The parsed JSON content, or undefined if the file doesn't exist or is invalid.
  */
 export async function readJsonFile<T>(filePath: string): Promise<T | undefined> {
-    try {
-        const fileContent = await fs.readFile(filePath, 'utf8');
-        return JSON.parse(fileContent) as T;
-    } catch (error) {
-        return undefined;
-    }
+  try {
+    const fileContent = await fs.readFile(filePath, 'utf8');
+    return JSON.parse(fileContent) as T;
+  } catch (error) {
+    return undefined;
+  }
 }
 
-export function readAndParseCSV<T extends any[]>(filePath: string, firstRowColumns = true): T {
-    const csvData = readFileSync(filePath, 'utf-8');
+export function readAndParseCSV<T>(filePath: string, firstRowColumns = true): T {
+  const csvData = readFileSync(filePath, 'utf-8');
 
-    return parse(csvData, {
-        columns: firstRowColumns,
-        skip_empty_lines: true,
-        bom: true,
-    });
+  return parse(csvData, {
+    columns: firstRowColumns,
+    skip_empty_lines: true,
+    bom: true,
+  });
 }

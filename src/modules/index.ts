@@ -1,3 +1,3 @@
-export * from "./WalletScreeningProcessor"
-export * from "./ElegibilityMerkleTree"
-export * from "./MerkleTreeSigner"
+export * from './WalletScreeningProcessor';
+export * from './EligibilityMerkleTree';
+export * from './MerkleTreeSigner';

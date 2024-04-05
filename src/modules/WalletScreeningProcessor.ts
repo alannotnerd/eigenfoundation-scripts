@@ -1,11 +1,8 @@
-
-
 import { EligibleAddressData, ChainalysisRiskLevel, RiskCount } from '../types';
 import * as asyncLib from 'async';
 import { ChainalysisAPI } from '../utils';
 
 export class WalletScreeningProcessor {
-
   outputData: string[] = [];
   processedCount: number = 0;
 
@@ -20,8 +17,8 @@ export class WalletScreeningProcessor {
   constructor(
     private chainalysisAPI: ChainalysisAPI,
     private inputData: EligibleAddressData[],
-    private maxConcurrentRequest: number
-  ) { }
+    private maxConcurrentRequest: number,
+  ) {}
 
   /**
    * Process the given addresses
@@ -54,7 +51,7 @@ export class WalletScreeningProcessor {
     this.riskCounts[riskLevel]++;
     this.processedCount++;
     process.stdout.write(`Processing: ${this.processedCount}/${this.inputData.length} addresses\r`);
-  };
+  }
 
   /**
    * Process the addresses in batches

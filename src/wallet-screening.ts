@@ -9,24 +9,25 @@ import { WalletScreeningProcessor } from './modules';
 import { CHAINALYSIS_API_URL, MAX_CHAINALYSIS_CONCURRENT_REQUESTS } from './constants';
 
 const env = cleanEnv(process.env, {
-    CHAINALYSIS_API_KEY: str()
+  CHAINALYSIS_API_KEY: str(),
 });
 
 (async () => {
-    const {
-        eligibilityData: eligibilityDataPath,
-        output: outputPath
-    } = parseArguments();
-    // TODO: remove hard limit. This is just for testing purposes
-    const eligibilityData = (readAndParseCSV<EligibleAddressData[]>(eligibilityDataPath)).slice(0, 10_000);
+  const { eligibilityData: eligibilityDataPath, output: outputPath } = parseArguments();
+  // TODO: remove hard limit. This is just for testing purposes
+  const eligibilityData = readAndParseCSV<EligibleAddressData[]>(eligibilityDataPath).slice(0, 10_000);
 
-    const chainalysisAPI = new ChainalysisAPI(CHAINALYSIS_API_URL, env.CHAINALYSIS_API_KEY);
-    const screeningProcessor = new WalletScreeningProcessor(chainalysisAPI, eligibilityData, MAX_CHAINALYSIS_CONCURRENT_REQUESTS);
+  const chainalysisAPI = new ChainalysisAPI(CHAINALYSIS_API_URL, env.CHAINALYSIS_API_KEY);
+  const screeningProcessor = new WalletScreeningProcessor(
+    chainalysisAPI,
+    eligibilityData,
+    MAX_CHAINALYSIS_CONCURRENT_REQUESTS,
+  );
 
-    const outputData = await screeningProcessor.run();
+  const outputData = await screeningProcessor.run();
 
-    // save output data to file
-    fs.writeFileSync(outputPath, outputData.join('\n') + '\n');
+  // save output data to file
+  fs.writeFileSync(outputPath, outputData.join('\n') + '\n');
 })();
 
 /**
@@ -34,16 +35,16 @@ const env = cleanEnv(process.env, {
  * @returns The parsed arguments.
  */
 function parseArguments() {
-    return yargs(hideBin(process.argv))
-        .option('eligibility-data', {
-            describe: 'Path to the address data CSV',
-            type: 'string',
-            demandOption: true,
-        })
-        .option('output', {
-            describe: 'Output path of the screening results CSV',
-            type: 'string',
-            demandOption: true,
-        })
-        .parseSync();
+  return yargs(hideBin(process.argv))
+    .option('eligibility-data', {
+      describe: 'Path to the address data CSV',
+      type: 'string',
+      demandOption: true,
+    })
+    .option('output', {
+      describe: 'Output path of the screening results CSV',
+      type: 'string',
+      demandOption: true,
+    })
+    .parseSync();
 }

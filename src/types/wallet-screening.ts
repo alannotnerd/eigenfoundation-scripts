@@ -1,10 +1,10 @@
 export type Address = string;
 
 export interface EligibleAddressData {
-  Address: string,
-  Allocation: string,
-  'Balance USD': string,
-  'Share of TVL': string,
+  Address: string;
+  Allocation: string;
+  'Balance USD': string;
+  'Share of TVL': string;
 }
 
 export enum ChainalysisRiskLevel {
@@ -17,18 +17,18 @@ export enum ChainalysisRiskLevel {
 
 export type RiskCount = { [key in ChainalysisRiskLevel]: number };
 
-export type ScreeningData = [Address, ChainalysisRiskLevel][]
+export type ScreeningData = [Address, ChainalysisRiskLevel][];
 
 export interface ChainalysisAddressData {
-  address: Address,
-  risk: ChainalysisRiskLevel,
-  cluster: unknown,
-  riskReason: unknown,
-  addressIdentifications: [],
+  address: Address;
+  risk: ChainalysisRiskLevel;
+  cluster: unknown;
+  riskReason: unknown;
+  addressIdentifications: [];
   exposures: {
-    category: string,
-    value: number
-  }[],
-  triggers: unknown[],
-  status: string
+    category: string;
+    value: number;
+  }[];
+  triggers: unknown[];
+  status: string;
 }

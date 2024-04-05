@@ -1,2 +1,2 @@
-export * from "./wallet-screening"
-export * from "./elegibility-response"
+export * from './wallet-screening';
+export * from './eligibility-response';

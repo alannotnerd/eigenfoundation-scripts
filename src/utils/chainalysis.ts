@@ -5,7 +5,6 @@ import { retryAsync } from 'ts-retry';
 import { CHAINALYSIS_MAX_RETRY, CHAINALYSIS_RETRY_DELAY } from '../constants';
 
 export class ChainalysisAPI {
-
   private apiClient: AxiosInstance;
 
   constructor(baseURL: string, apiKey: string) {
@@ -13,7 +12,7 @@ export class ChainalysisAPI {
       baseURL,
       headers: {
         Token: apiKey,
-      }
+      },
     });
   }
 
@@ -26,16 +25,19 @@ export class ChainalysisAPI {
     try {
       const entitiesPath = '/api/risk/v2/entities';
 
-      const risk = await retryAsync(async () => {
-        await this.apiClient.post(entitiesPath, { address });
+      const risk = await retryAsync(
+        async () => {
+          await this.apiClient.post(entitiesPath, { address });
 
-        const { data } = await this.apiClient.get<ChainalysisAddressData>(path.join(entitiesPath, address));
-        if (!Object.values(ChainalysisRiskLevel).includes(data.risk)) {
-          throw new Error(`Invalid risk level: ${data.risk}`);
-        }
+          const { data } = await this.apiClient.get<ChainalysisAddressData>(path.join(entitiesPath, address));
+          if (!Object.values(ChainalysisRiskLevel).includes(data.risk)) {
+            throw new Error(`Invalid risk level: ${data.risk}`);
+          }
 
-        return data.risk;
-      }, { delay: CHAINALYSIS_RETRY_DELAY, maxTry: CHAINALYSIS_MAX_RETRY });
+          return data.risk;
+        },
+        { delay: CHAINALYSIS_RETRY_DELAY, maxTry: CHAINALYSIS_MAX_RETRY },
+      );
 
       return risk;
     } catch (error: unknown) {
