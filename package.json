@@ -20,15 +20,21 @@
   },
   "dependencies": {
     "@openzeppelin/merkle-tree": "1.0.6",
+    "async": "3.2.5",
     "axios": "1.6.5",
     "csv-parse": "5.5.5",
     "dotenv": "16.4.5",
-    "ethers": "6.11.1"
+    "envalid": "8.0.0",
+    "ethers": "6.11.1",
+    "ts-retry": "4.2.5",
+    "yargs": "17.7.2"
   },
   "devDependencies": {
     "@commitlint/cli": "18.4.4",
     "@commitlint/config-conventional": "18.4.4",
     "@defi-wonderland/crypto-husky-checks": "1.3.0",
+    "@types/async": "3.2.24",
+    "@types/yargs": "17.0.32",
     "@typescript-eslint/eslint-plugin": "6.0.0",
     "@typescript-eslint/parser": "6.0.0",
     "dotenv-cli": "7.2.1",

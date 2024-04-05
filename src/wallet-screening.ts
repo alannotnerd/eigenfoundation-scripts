@@ -1,44 +1,49 @@
+import 'dotenv/config';
 import * as fs from 'fs';
-import { retrieveRisk, streamFile, log } from './utils';
-import { SCREENING_CSV_PATH, ADDRESSES_LIST_PATH } from './constants';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+import { EligibleAddressData } from './types';
+import { ChainalysisAPI, readAndParseCSV } from './utils';
+import { cleanEnv, str } from 'envalid';
+import { WalletScreeningProcessor } from './modules';
+import { CHAINALYSIS_API_URL, MAX_CHAINALYSIS_CONCURRENT_REQUESTS } from './constants';
 
-export interface WalletRisk {
-  [address: string]: string;
-}
-
-const BATCH_SIZE = 30;
+const env = cleanEnv(process.env, {
+    CHAINALYSIS_API_KEY: str()
+});
 
 (async () => {
-  const list = await streamFile(ADDRESSES_LIST_PATH);
-  const processedWallets = await streamFile(SCREENING_CSV_PATH);
+    const {
+        eligibilityData: eligibilityDataPath,
+        output: outputPath
+    } = parseArguments();
+    // TODO: remove hard limit. This is just for testing purposes
+    const eligibilityData = (readAndParseCSV<EligibleAddressData[]>(eligibilityDataPath)).slice(0, 10_000);
 
-  const walletsRisk: WalletRisk = processedWallets.reduce(
-    (result, item) => {
-      const [address, risk] = item.split(', ');
-      result[address] = risk;
-      return result;
-    },
-    <WalletRisk>{},
-  );
+    const chainalysisAPI = new ChainalysisAPI(CHAINALYSIS_API_URL, env.CHAINALYSIS_API_KEY);
+    const screeningProcessor = new WalletScreeningProcessor(chainalysisAPI, eligibilityData, MAX_CHAINALYSIS_CONCURRENT_REQUESTS);
 
-  const writer = fs.createWriteStream(SCREENING_CSV_PATH, { flags: 'a' });
+    const outputData = await screeningProcessor.run();
 
-  let processed = 1;
-  for (let i = 0; i < list.length; i += BATCH_SIZE) {
-    const batch = list
-      .slice(i, i + BATCH_SIZE)
-      .filter((address: string) => !!address && walletsRisk[address] === undefined);
-
-    const results = await Promise.all(
-      batch.map(async (address: string) => {
-        const risk = await retrieveRisk(address);
-        log(`Processed ${processed++}: ${address}, ${risk}`);
-        return `${address}, ${risk}\n`;
-      }),
-    );
-
-    writer.write(results.join(''));
-  }
-
-  writer.end();
+    // save output data to file
+    fs.writeFileSync(outputPath, outputData.join('\n') + '\n');
 })();
+
+/**
+ * Parse command-line arguments.
+ * @returns The parsed arguments.
+ */
+function parseArguments() {
+    return yargs(hideBin(process.argv))
+        .option('eligibility-data', {
+            describe: 'Path to the address data CSV',
+            type: 'string',
+            demandOption: true,
+        })
+        .option('output', {
+            describe: 'Output path of the screening results CSV',
+            type: 'string',
+            demandOption: true,
+        })
+        .parseSync();
+}
