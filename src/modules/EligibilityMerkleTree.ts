@@ -7,6 +7,7 @@ import {
   EligibleAddressData,
 } from '../types';
 import { StandardMerkleTree } from '@openzeppelin/merkle-tree';
+import { parseEther } from 'ethers';
 
 export class EligibilityMerkleTree {
   constructor(
@@ -43,10 +44,9 @@ export class EligibilityMerkleTree {
   ): EligibilityMerkleData {
     return eligibilityData.reduce(
       (acc, data) => {
-        const isRiskAcceptable = this.acceptedRiskLevels.includes(riskLevels[data.Address]);
+        const isRiskAcceptable = this.acceptedRiskLevels.includes(riskLevels[data.Restaker]);
         if (isRiskAcceptable) {
-          // TODO: which field should be used here? We don't currently have allocation in the CSV provided
-          acc.push([data.Address, BigInt('10')]);
+          acc.push([data.Restaker, parseEther(data['Allocation (EIGEN)'])]);
         }
         return acc;
       },

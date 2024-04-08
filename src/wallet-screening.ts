@@ -14,8 +14,7 @@ const env = cleanEnv(process.env, {
 
 (async () => {
   const { eligibilityData: eligibilityDataPath, output: outputPath } = parseArguments();
-  // TODO: remove hard limit. This is just for testing purposes
-  const eligibilityData = readAndParseCSV<EligibleAddressData[]>(eligibilityDataPath).slice(0, 10_000);
+  const eligibilityData = readAndParseCSV<EligibleAddressData[]>(eligibilityDataPath);
 
   const chainalysisAPI = new ChainalysisAPI(CHAINALYSIS_API_URL, env.CHAINALYSIS_API_KEY);
   const screeningProcessor = new WalletScreeningProcessor(

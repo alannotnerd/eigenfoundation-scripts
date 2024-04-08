@@ -1,10 +1,9 @@
 export type Address = string;
 
 export interface EligibleAddressData {
-  Address: string;
-  Allocation: string;
+  Restaker: string;
+  'Allocation (EIGEN)': string;
   'Balance USD': string;
-  'Share of TVL': string;
 }
 
 export enum ChainalysisRiskLevel {

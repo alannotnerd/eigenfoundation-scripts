@@ -35,7 +35,7 @@ export class WalletScreeningProcessor {
    * @returns A promise that resolves when the address has been processed
    */
   private async processAddress(addressData: EligibleAddressData, callback: (error?: Error) => void): Promise<void> {
-    const riskLevel = await this.chainalysisAPI.retrieveRisk(addressData.Address);
+    const riskLevel = await this.chainalysisAPI.retrieveRisk(addressData.Restaker);
     this.updateData(addressData, riskLevel);
     callback();
   }
@@ -47,7 +47,7 @@ export class WalletScreeningProcessor {
    */
   private updateData(addressData: EligibleAddressData, riskLevel: ChainalysisRiskLevel): void {
     // Save the result and update the risk counts
-    this.outputData.push(`${addressData.Address},${riskLevel}`);
+    this.outputData.push(`${addressData.Restaker},${riskLevel}`);
     this.riskCounts[riskLevel]++;
     this.processedCount++;
     process.stdout.write(`Processing: ${this.processedCount}/${this.inputData.length} addresses\r`);

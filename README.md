@@ -14,7 +14,7 @@ Ensure you have a valid Chainalysis API key. This key must be set as the `CHAINA
 
 The signer private key must be set in the env variable `SIGNER_PRIVATE_KEY`, and should match the signer address from the merkle distributor contract.
 
-And lastly, the eligibility CSV must contain the `Address`, `Balance USD`, `Share of TVL`, and `Allocation` fields.
+And lastly, the eligibility CSV must contain the `Restaker`, `Balance USD`, and `Allocation (EIGEN)` fields.
 
 ## Installation
 
