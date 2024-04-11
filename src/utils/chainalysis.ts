@@ -3,11 +3,21 @@ import * as path from 'path';
 import { ChainalysisAddressData, ChainalysisRiskLevel } from '../types';
 import { retryAsync } from 'ts-retry';
 import { CHAINALYSIS_MAX_RETRY, CHAINALYSIS_RETRY_DELAY } from '../constants';
+import { ethers } from 'ethers';
 
+/**
+ * Chainalysis API client
+ */
 export class ChainalysisAPI {
   private apiClient: AxiosInstance;
 
-  constructor(baseURL: string, apiKey: string) {
+  constructor(
+    baseURL: string,
+    apiKey: string,
+    private maxRetry: number = CHAINALYSIS_MAX_RETRY,
+    private retryDelay: number = CHAINALYSIS_RETRY_DELAY,
+  ) {
+    new URL(baseURL); // Validate the URL (throws an error if invalid
     this.apiClient = axios.create({
       baseURL,
       headers: {
@@ -23,6 +33,9 @@ export class ChainalysisAPI {
    */
   async retrieveRisk(address: string): Promise<ChainalysisRiskLevel> {
     try {
+      if (!ethers.isAddress(address)) {
+        throw new Error(`Invalid address: ${address}`);
+      }
       const entitiesPath = '/api/risk/v2/entities';
 
       const risk = await retryAsync(
@@ -36,7 +49,7 @@ export class ChainalysisAPI {
 
           return data.risk;
         },
-        { delay: CHAINALYSIS_RETRY_DELAY, maxTry: CHAINALYSIS_MAX_RETRY },
+        { delay: this.retryDelay, maxTry: this.maxRetry },
       );
 
       return risk;

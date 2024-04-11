@@ -14,16 +14,18 @@ Ensure you have a valid Chainalysis API key. This key must be set as the `CHAINA
 
 The signer private key must be set in the env variable `SIGNER_PRIVATE_KEY`, and should match the signer address from the merkle distributor contract.
 
-And lastly, the eligibility CSV must contain the `Restaker`, `Balance USD`, and `Allocation (EIGEN)` fields.
+And lastly, the eligibility CSV must contain the `Restaker`, and `Allocation (EIGEN)` fields.
 
 ## Installation
 
 1. Clone the repository.
+
 ```bash
 git clone git@github.com:defi-wonderland/eigenfoundation-scripts.git
 ```
 
 2. Install the necessary dependencies.
+
 ```bash
 yarn install
 ```
@@ -48,30 +50,30 @@ yarn wallet-screening --eligibility-data data/eligible.csv --output data/eligibl
 
 All parameters are mandatory.
 
-| Option               | Description                              |
-| -------------------- | -----------------------------------------|
-| `eligibility-data`   | Path to the address data CSV             |
-| `output`             | Output path of the screening results CSV |
+| Option             | Description                              |
+| ------------------ | ---------------------------------------- |
+| `eligibility-data` | Path to the address data CSV             |
+| `output`           | Output path of the screening results CSV |
 
 ### Merkle Tree and Proofs Generation
 
-Generates the merkle tree and prints its root in the console. It also generates the merkle proofs for each of the addresses in the eligibility CSV file, excluding the ones that are assigned a risk score above the threshold. Finally, a claim signature is created for the eligible addresses and is saved to the same file as the proofs.
+Generates the merkle tree and prints its root in the console. It also generates the merkle proofs for each of the addresses in the eligibility CSV file, excluding the ones that are assigned a risk score that doesn't match with the accepted risk levels given in `constants.ts` file. Finally, a claim signature is created for the eligible addresses and is saved to the same file as the proofs.
 
 ```bash
-yarn eligibility-response --eligibility-data data/eligible.csv --screening-data data/eligible-screened.csv --output data/proofs-and-signatures.json
+yarn eligibility-response --screening-data data/eligible-screened.csv --output data/proofs-and-signatures.json
 ```
 
 #### Parameters
 
 All parameters are mandatory.
 
-| Option               | Description                               |
-| -------------------- | ------------------------------------------|
-| `eligibility-data`   | Path to the address data CSV              |
-| `screening-data`     | Path to the screening results CSV          |
-| `output`             | Output path of the processed results JSON |
+| Option           | Description                               |
+| ---------------- | ----------------------------------------- |
+| `screening-data` | Path to the screening results CSV         |
+| `output`         | Output path of the processed results JSON |
 
 ## License
+
 The primary license for the scripts is MIT, see [`LICENSE`](./LICENSE).
 
 ## Contributors

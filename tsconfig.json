@@ -1,7 +1,23 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
-    "target": "es6",
+    "declaration": true,
+    "declarationMap": true,
+    "strict": true,
+    "outDir": "lib",
+    "esModuleInterop": true,
     "module": "commonjs",
-    "moduleResolution": "node"
-  }
+    "noImplicitReturns": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "target": "es2020"
+  },
+  "exclude": [
+    "node_modules",
+    "test"
+  ],
+  "include": [
+    "src"
+  ]
 }

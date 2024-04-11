@@ -1,52 +1,37 @@
-import {
-  Address,
-  ChainalysisRiskLevel,
-  ScreeningData,
-  EligibilityMerkleData,
-  RiskLevelsMapping,
-  EligibleAddressData,
-} from '../types';
+import { Address, ChainalysisRiskLevel, EligibilityMerkleData, ScreenedAddress } from '../types';
 import { StandardMerkleTree } from '@openzeppelin/merkle-tree';
 import { parseEther } from 'ethers';
 
 export class EligibilityMerkleTree {
   constructor(
-    private eligibilityData: EligibleAddressData[],
-    private screeningData: ScreeningData,
-    private acceptedRiskLevels: ChainalysisRiskLevel[],
+    private screeningData: ScreenedAddress[],
+    private _acceptedRiskLevels: ChainalysisRiskLevel[],
   ) {}
 
+  get acceptedRiskLevels(): ChainalysisRiskLevel[] {
+    return this._acceptedRiskLevels;
+  }
   createTree(): StandardMerkleTree<[string, bigint]> {
-    const riskLevels = this.getRiskLevels(this.screeningData);
-    const eligibilityMerkleData = this.computeMerkleData(this.eligibilityData, riskLevels);
-
-    console.log(`Inserting ${eligibilityMerkleData.length} addresses into the merkle tree`);
-    const tree = StandardMerkleTree.of(eligibilityMerkleData, ['address', 'uint256']);
-
+    const merkleData = this.computeMerkleData(this.screeningData);
+    if (merkleData.length <= 0) {
+      throw new Error(
+        `No data to insert into the merkle tree, accepted risk levels are [${this._acceptedRiskLevels.join(', ')}]`,
+      );
+    }
+    console.log(`Inserting ${merkleData.length} addresses into the merkle tree`);
+    const tree = StandardMerkleTree.of(merkleData, ['address', 'uint256']);
     // Log the Merkle root
     console.log(`Merkle Root: ${tree.root}`);
 
     return tree;
   }
 
-  private getRiskLevels(screeningData: ScreeningData): RiskLevelsMapping {
-    // Save each address and its risk level to an object to keep O(1) access time
-    const addressRiskLevel: RiskLevelsMapping = {};
-    screeningData.forEach(([address, riskLevel]) => {
-      addressRiskLevel[address] = riskLevel;
-    });
-    return addressRiskLevel;
-  }
-
-  private computeMerkleData(
-    eligibilityData: EligibleAddressData[],
-    riskLevels: RiskLevelsMapping,
-  ): EligibilityMerkleData {
+  private computeMerkleData(eligibilityData: ScreenedAddress[]): EligibilityMerkleData {
     return eligibilityData.reduce(
       (acc, data) => {
-        const isRiskAcceptable = this.acceptedRiskLevels.includes(riskLevels[data.Restaker]);
+        const isRiskAcceptable = this.acceptedRiskLevels.includes(data.Risk as ChainalysisRiskLevel);
         if (isRiskAcceptable) {
-          acc.push([data.Restaker, parseEther(data['Allocation (EIGEN)'])]);
+          acc.push([data.Restaker, parseEther(parseFloat(data['Allocation (EIGEN)']).toFixed(18))]);
         }
         return acc;
       },

@@ -1,21 +1,18 @@
-import { Address, EligibilityResponseDataMapping } from '../types';
+import { Address, EligibilityResponseMapping } from '../types';
 import { StandardMerkleTree } from '@openzeppelin/merkle-tree';
-import { getBytes, solidityPackedKeccak256, Wallet } from 'ethers';
+import { getBytes, isAddress, solidityPackedKeccak256, Wallet } from 'ethers';
 
 export class MerkleTreeSigner {
-  constructor(
-    private tree: StandardMerkleTree<[Address, bigint]>,
-    private signer: Wallet,
-  ) {}
+  constructor() {}
 
-  async signLeaves(): Promise<EligibilityResponseDataMapping> {
-    const outputData: EligibilityResponseDataMapping = {};
+  async signLeaves(tree: StandardMerkleTree<[Address, bigint]>, signer: Wallet): Promise<EligibilityResponseMapping> {
+    const outputData: EligibilityResponseMapping = {};
 
-    for (const [index, leaf] of this.tree.entries()) {
+    for (const [index, leaf] of tree.entries()) {
       const [address, allocation] = leaf;
 
-      const proof = this.tree.getProof(index);
-      const signature = await this.generateSignature(address, allocation, this.signer);
+      const proof = tree.getProof(index);
+      const signature = await this.generateSignature(address, allocation, signer);
 
       outputData[address] = {
         signature,
@@ -31,6 +28,9 @@ export class MerkleTreeSigner {
   }
 
   private async generateSignature(address: Address, amount: bigint, signer: Wallet): Promise<string> {
+    if (!isAddress(address)) {
+      throw new Error(`Invalid address provided while signing merkle tree leaves: ${address}`);
+    }
     const messageHash = solidityPackedKeccak256(['address', 'uint256'], [address, amount]);
     const ethSignedMessageHash = getBytes(messageHash);
     const signature = await signer.signMessage(ethSignedMessageHash);

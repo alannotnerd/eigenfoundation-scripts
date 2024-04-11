@@ -7,11 +7,26 @@ import { readFileSync } from 'fs';
  * @param firstRowColumns - Whether the first row contains the column names.
  * @returns The parsed CSV data.
  */
-export function readAndParseCSV<T extends Array<unknown>>(filePath: string, firstRowColumns = true): T {
+export function readAndParseCSV<T extends Array<unknown>>(filePath: string, headers: string[]): T {
   const csvData = readFileSync(filePath, 'utf-8');
-  return parse(csvData, {
-    columns: firstRowColumns,
+  const parsedData = parse(csvData, {
+    columns: true,
     skip_empty_lines: true,
     bom: true,
   });
+
+  if (parsedData.length === 0) {
+    throw new Error('No data found in the CSV file');
+  }
+  validateHeaders(parsedData, headers);
+  return parsedData;
 }
+
+export const validateHeaders = (parsedData: Record<string, unknown>[], headers: string[]) => {
+  if (parsedData.length > 0) {
+    const parsedHeaders = Object.keys(parsedData[0]);
+    if (!(JSON.stringify(parsedHeaders) === JSON.stringify(headers))) {
+      throw new Error(`Invalid headers: expected headers are ${headers}`);
+    }
+  }
+};
