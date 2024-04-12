@@ -6,6 +6,7 @@
   "scripts": {
     "eligibility-response": "ts-node src/eligibility-response.ts",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "lint:check": "prettier --check .",
     "lint:fix": "yarn run lint -- --fix",
     "prepare": "husky install && wonderland-crypto-husky-checks install",
     "test": "jest ./test",
