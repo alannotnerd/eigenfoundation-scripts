@@ -1,6 +1,6 @@
 import { Address, EligibilityResponseMapping } from '../types';
 import { StandardMerkleTree } from '@openzeppelin/merkle-tree';
-import { getBytes, isAddress, solidityPackedKeccak256, Wallet } from 'ethers';
+import { getBytes, Wallet, keccak256, AbiCoder, isAddress } from 'ethers';
 
 export class MerkleTreeSigner {
   constructor() {}
@@ -31,7 +31,9 @@ export class MerkleTreeSigner {
     if (!isAddress(address)) {
       throw new Error(`Invalid address provided while signing merkle tree leaves: ${address}`);
     }
-    const messageHash = solidityPackedKeccak256(['address', 'uint256'], [address, amount]);
+    // Encode and double hash the message
+    const encodedMessage = AbiCoder.defaultAbiCoder().encode(['address', 'uint256'], [address, amount]);
+    const messageHash = keccak256(keccak256(encodedMessage));
     const ethSignedMessageHash = getBytes(messageHash);
     const signature = await signer.signMessage(ethSignedMessageHash);
     return signature;

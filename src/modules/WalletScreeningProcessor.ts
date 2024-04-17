@@ -23,12 +23,15 @@ export class WalletScreeningProcessor {
   get outputData(): string[] {
     return this._outputData;
   }
+
   get riskCounts(): RiskCount {
     return this._riskCounts;
   }
+
   get processedCount(): number {
     return this._processedCount;
   }
+
   /**
    * Process the given addresses
    * @returns CSV data with the risk level for each address
