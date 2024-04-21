@@ -13,7 +13,7 @@ export const ELIGIBLE_ADDRESS_HEADERS = [
   'Restaking Time (Days)',
   'Restaked Points',
   'Allocation (EIGEN)',
-  'Contract',
+  'New Address',
 ] as const;
 export const SCREENED_ADDRESS_HEADERS = ['Restaker', 'Allocation (EIGEN)', 'Risk'] as const;
 export const ELIGIBILITY_RESPONSE_HEADERS = ['Signature', 'Proof', 'Allocation'] as const;
