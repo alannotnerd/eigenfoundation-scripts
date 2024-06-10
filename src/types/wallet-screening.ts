@@ -13,6 +13,7 @@ export type ScreenedAddress = {
 };
 
 export enum ChainalysisRiskLevel {
+  Empty = '',
   Low = 'Low',
   Medium = 'Medium',
   High = 'High',

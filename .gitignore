@@ -3,3 +3,6 @@ node_modules
 data
 .eslintcache
 coverage
+build/
+lib/
+*.csv

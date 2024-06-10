@@ -7,6 +7,7 @@ export class WalletScreeningProcessor {
   private _processedCount: number = 0;
 
   private _riskCounts: RiskCount = {
+    [ChainalysisRiskLevel.Empty]: 0,
     [ChainalysisRiskLevel.Low]: 0,
     [ChainalysisRiskLevel.Medium]: 0,
     [ChainalysisRiskLevel.High]: 0,
@@ -18,7 +19,7 @@ export class WalletScreeningProcessor {
     private chainalysisAPI: ChainalysisAPI,
     private inputData: EligibleAddress[],
     private maxConcurrentRequest: number,
-  ) {}
+  ) { }
 
   get outputData(): string[] {
     return this._outputData;

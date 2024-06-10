@@ -25,8 +25,11 @@ export function readAndParseCSV<T extends Array<unknown>>(filePath: string, head
 export const validateHeaders = (parsedData: Record<string, unknown>[], headers: string[]) => {
   if (parsedData.length > 0) {
     const parsedHeaders = Object.keys(parsedData[0]);
-    if (!(JSON.stringify(parsedHeaders) === JSON.stringify(headers))) {
-      throw new Error(`Invalid headers: expected headers are ${headers}`);
+    for (const header of headers) {
+      if ((parsedHeaders.findIndex((v) => v === header) === -1)) {
+        throw new Error(`Invalid headers: expected headers are ${headers}`);
+      }
     }
+
   }
 };
